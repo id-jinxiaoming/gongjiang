@@ -1,0 +1,6 @@
+.logo{text-align:center;margin-top: 25%;}
+.logo img{display: block;margin: 0 auto;margin-bottom:20px;}
+.btns{text-align: center;margin-top:20%;}
+.ios{background: #2fca3c;border: none;color:#fff;border-radius:4px;height: 38px;line-height: 38px;width:200px;margin: 0 auto;margin-bottom: 20px;display: block;}
+.ios-icon{background: url(../img/IOS.png) no-repeat;display: inline-block;width:20px;height: 20px;vertical-align: -4px;margin-right: 15px;}
+.android-icon{background: url(../img/Android.png) no-repeat;display: inline-block;width:20px;height: 20px;vertical-align: -4px;margin-right: 15px;}

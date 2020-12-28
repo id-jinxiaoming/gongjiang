@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+                     http://www.springframework.org/schema/beans/spring-beans.xsd
+                     http://www.springframework.org/schema/tx
+                     http://www.springframework.org/schema/tx/spring-tx.xsd
+                     http://www.springframework.org/schema/context
+                     http://www.springframework.org/schema/context/spring-context.xsd
+                     http://www.springframework.org/schema/aop
+                     http://www.springframework.org/schema/aop/spring-aop.xsd
+                     http://www.springframework.org/schema/jdbc
+                     http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+                     http://www.springframework.org/schema/util
+                     http://www.springframework.org/schema/util/spring-util-4.0.xsd
+                     http://www.springframework.org/schema/mvc
+                     http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+	   					http://code.alibabatech.com/schema/dubbo
+		              http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	<bean class="com.ff.common.util.SwaggerConfig"/>
+	<context:component-scan base-package="com.ff.*.controller" >
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+	<context:component-scan base-package="com.ff.*.aop" />
+	<dubbo:annotation package="com.ff" />
+	<!-- 启动对@AspectJ注解的支持  --> 
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<!-- 国际化  -->
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" />
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:validation</value>
+			</list>
+		</property>
+		<property name="useCodeAsDefaultMessage" value="true" />
+	</bean>
+	<mvc:annotation-driven validator="validator">
+		<mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+
+            <property name="objectMapper">
+
+                <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+
+                    <property name="dateFormat">
+
+                    <bean class="java.text.SimpleDateFormat">
+
+                        <constructor-arg type="java.lang.String" value="yyyy-MM-dd
+                        HH:mm:ss"/>
+
+                    </bean>
+
+                    </property>
+
+                </bean>
+
+            </property>
+
+        </bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!--这里配置将使用上面国际化配置的messageSource -->
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
+
+	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 视图解析器 -->
+	<bean id="viewResolverCommon"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+		<!--可为空,方便实现自已的依据扩展名来选择视图解释类的逻辑-->
+		<property name="viewClass">
+			<value>org.springframework.web.servlet.view.InternalResourceView
+			</value>
+		</property>
+		<property name="order" value="1" />
+	</bean>
+	<!-- 配置freeMarker视图解析器 -->
+	
+	<bean id="freemarkerConfig" class="com.ff.common.freemarker.FreeMarkerConfigExtend">
+		<property name="templateLoaderPath">
+			<value>/WEB-INF/ftl/</value>
+		</property>
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="xml_escape" value-ref="fmXmlEscape" />
+			</map>
+		</property>
+		<property name="defaultEncoding">
+			<value>utf-8</value>
+		</property>
+		<property name="freemarkerSettings">
+			<props>
+			 	<prop key="classic_compatible">true</prop>
+				<prop key="default_encoding">UTF-8</prop>  
+				<prop key="template_update_delay">0</prop>
+				<prop key="defaultEncoding">UTF-8</prop>
+				<prop key="url_escaping_charset">UTF-8</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="boolean_format">true,false</prop>
+				<prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+				<prop key="date_format">yyyy-MM-dd</prop>
+				<prop key="time_format">HH:mm:ss</prop>
+				<!--<prop key="number_format">0.######</prop>-->
+				<prop key="number_format">#</prop>
+				<prop key="whitespace_stripping">true</prop>
+				<prop key="auto_import">
+					/common/config/top.ftl as _top,
+					/common/config/left.ftl as _left,
+					/common/config/menu.ftl as _menu
+				</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape"/>
+	<bean id="viewResolverFtl" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="viewClass" value="com.ff.common.freemarker.FreeMarkerViewExtend" />
+		<property name="contentType" value="text/html; charset=utf-8" />
+		<property name="cache" value="true" />
+		<property name="prefix" value=""/>
+		<property name="suffix" value=".ftl" />  
+		<property name="order" value="0" />
+	</bean>
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="order" value="2"></property>
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+	<!-- 上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+        <property name="defaultEncoding" value="utf-8"></property>   
+        <property name="maxUploadSize" value="10485760000"></property>  
+        <property name="maxInMemorySize" value="40960"></property>  
+   </bean>  
+	
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"> 
+		<property name="exceptionMappings"> 
+			 <props> 
+				<prop key="org.apache.shiro.authz.UnauthorizedException">common/unauth</prop>
+			 </props> 
+		 </property> 
+	</bean> 
+	
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">
+    	<property name="proxyTargetClass" value="true" />
+	</bean>
+
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+	    <property name="securityManager" ref="securityManager"/>
+	</bean>
+	
+	<!-- 自定义拦截链配置
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.ff.system.service.impl.LogInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+ 	-->
+	<mvc:resources mapping="/uploads/**" location="/uploads/"   />
+    <mvc:resources mapping="/static/**" location="/static/"/>
+	<mvc:resources location="classpath:/META-INF/resources/" mapping="swagger-ui.html"/>
+	<mvc:resources location="classpath:/META-INF/resources/webjars/" mapping="/webjars/**"/>
+
+
+</beans>

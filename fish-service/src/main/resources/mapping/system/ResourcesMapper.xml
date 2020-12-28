@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ff.system.dao.ResourcesMapper">
+<cache type="com.ff.common.mybatis.RedisCache" /> 
+<resultMap id="BaseResultMap" type="com.ff.system.model.Resources">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="pid" jdbcType="VARCHAR" property="pid" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+   	<result column="sort" jdbcType="VARCHAR" property="sort" />
+   	<result column="permission" jdbcType="VARCHAR" property="permission" />
+   	<result column="icon" jdbcType="VARCHAR" property="icon" />
+  </resultMap>
+  
+   
+  <select id="selectListByUserId" parameterType="com.ff.system.model.Resources" resultMap="BaseResultMap">
+    select distinct(sys_resources.id) ,sys_resources.pid,sys_resources.name,sys_resources.url,sys_resources.type,sys_resources.sort,sys_resources.permission,sys_resources.icon
+    from sys_resources,sys_role_resources,sys_user_role
+    where sys_resources.id=sys_role_resources.resources_id
+    and sys_user_role.role_id=sys_role_resources.role_id
+    <if test="type!= null and type != 0">
+	and sys_resources.type = #{type,jdbcType=VARCHAR}
+	</if>
+	
+    and sys_user_role.user_id = #{userId,jdbcType=VARCHAR}
+    ORDER BY sys_resources.sort
+  </select>
+
+    <select id="selectListByRoleId" parameterType="com.ff.system.model.Resources" resultMap="BaseResultMap">
+        select distinct(sys_resources.id) ,sys_resources.pid,sys_resources.name,sys_resources.url,sys_resources.type,sys_resources.sort,sys_resources.permission,sys_resources.icon
+        from sys_resources,sys_role_resources
+        where sys_resources.id=sys_role_resources.resources_id
+
+
+        and sys_role_resources.role_id = #{roleId,jdbcType=VARCHAR}
+        ORDER BY sys_resources.sort
+    </select>
+  
+  
+</mapper>

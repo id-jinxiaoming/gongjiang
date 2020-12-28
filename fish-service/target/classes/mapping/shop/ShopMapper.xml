@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ff.shop.dao.ShopMapper">
+<cache type="com.ff.common.mybatis.RedisCache" />
+
+    <delete id="deleteByCateId" parameterType="java.lang.Integer" >
+        delete from tb_goods_cate_brand
+        where cate_id = #{cateId}
+    </delete>
+
+
+    <select id="selectByLngLat" resultType="com.ff.shop.model.bo.ShopBO" >
+        select
+        *
+        from tb_shop
+        where status =1 and closed =0
+        <if test="shop.isTui == 1" >
+            and is_tui = #{shop.isTui,jdbcType=INTEGER}
+        </if>
+        <if test="shop.title != null" >
+            and title LIKE concat('%',#{shop.title},'%')
+        </if>
+        <if test="shop.cateId != 0" >
+            and cate_id = #{shop.cateId,jdbcType=INTEGER}
+        </if>
+          order by (ABS(lng-#{shop.lng,jdbcType=VARCHAR}) +  ABS(lat-#{shop.lat,jdbcType=VARCHAR})) asc
+    </select>
+
+</mapper>

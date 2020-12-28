@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ff.order.dao.OrderShippingMapper">
+<cache type="com.ff.common.mybatis.RedisCache" />
+
+    <select id="selectByPage"   resultType="com.ff.order.model.bo.OrderShippingBO">
+        SELECT a.*,b.name FROM tb_order_shipping a LEFT JOIN tb_shipping_carrier b on a.carrier_id=b.id
+        where 1=1
+        <if test="id != ''" >
+             and ( order_id like CONCAT('%',#{id},'%') OR tracking_no like CONCAT('%',#{id},'%') )
+        </if>
+
+    </select>
+
+
+</mapper>

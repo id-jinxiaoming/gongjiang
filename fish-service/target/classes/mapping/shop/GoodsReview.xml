@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ff.shop.dao.GoodsReviewMapper">
+<cache type="com.ff.common.mybatis.RedisCache" />
+
+    <select id="selectListByT" parameterType="com.ff.shop.model.GoodsReview" resultType="com.ff.shop.model.bo.GoodsReviewBO">
+         SELECT a.review_id reviewId , a.order_id orderId, a.rating, a.content, a.created_date createdDate, a.status, a.replied,
+                               b.goods_id goodsId, b.goods_name goodsName,
+                               c.user_id userId, c.username
+                        FROM tb_goods_review AS a
+                        LEFT JOIN tb_order_goods AS b
+                        ON a.order_id = b.order_id AND a.goods_id = b.goods_id
+                        LEFT JOIN tb_users AS c
+                        ON c.user_id = a.user_id
+                        where 1=1
+                        <if test="goodsId>0" >
+                            and a.goods_id = #{goodsId}
+                        </if>
+                        ORDER BY review_id desc
+    </select>
+
+
+</mapper>

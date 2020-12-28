@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ff.system.dao.LogMapper">
+<cache type="com.ff.common.mybatis.RedisCache" />
+
+    <select id="selectPageByAccount"   resultType="java.util.Map">
+        select a.*,b.account
+        from sys_log a,sys_user b
+        where b.id=a.user_id
+        <if test="account != ''" >
+            and b.account=#{account,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
+</mapper>

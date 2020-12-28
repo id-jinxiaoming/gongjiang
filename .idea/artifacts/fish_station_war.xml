@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="fish-station:war">
+    <output-path>$PROJECT_DIR$/fish-station/target</output-path>
+    <root id="archive" name="fish-station-0.0.1-SNAPSHOT.war">
+      <element id="artifact" artifact-name="fish-station:war exploded" />
+    </root>
+  </artifact>
+</component>

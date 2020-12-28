@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ff.order.dao.OrderMapper">
+<cache type="com.ff.common.mybatis.RedisCache" />
+
+    <select id="selectPageByOrderId"   resultType="java.util.Map">
+        select a.*,b.receiver,b.province,b.city,b.address,b.zip,b.mobile
+        from tb_order a left JOIN  tb_order_consignee b on a.order_id=b.order_id
+        where 1=1
+        <if test="orderId != ''" >
+            and a.order_id=#{orderId,jdbcType=VARCHAR}
+        </if>
+        ORDER  by id DESC
+    </select>
+
+    <select id="findOrderByID"   resultType="java.util.Map">
+        select * from order_view where 1=1
+        <if test="orderId != ''" >
+            and order_id=#{orderId,jdbcType=VARCHAR}
+        </if>
+    </select>
+</mapper>
